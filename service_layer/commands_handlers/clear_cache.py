@@ -17,6 +17,7 @@ def clear_cache_cmd(
         return
 
     user_id: int = update.effective_message.from_user.id
+    chat_id: int = update.effective_chat.id
 
     with uow:
         # Check if it's admin, owner or staff
@@ -33,5 +34,5 @@ def clear_cache_cmd(
 
         uow.commit()
     
-    clear_chat_member_cache()
+    clear_chat_member_cache(chat_id=chat_id)
     update.effective_message.reply_text("Cache cleared.")
