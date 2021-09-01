@@ -35,7 +35,7 @@ def show_bd_cmd(
         birthday_chat_members: List[Tuple[Birthday, ChatMember]] = []
 
         for bd in birthdays:
-
+            update.effective_chat.send_action("typing")
             chat_member: Optional[ChatMember] = get_chat_member(
                 chat_id=chat_id, 
                 user_id=bd.user_id,
