@@ -119,7 +119,7 @@ class SqlAlchemyRepository(AbstractRepository):
         return self.session.query(GroupHour).filter(GroupHour.chat_id == chat_id).all()
 
     def get_bd_list(self) -> List[Birthday]:
-        return self.session.query(Birthday).all()
+        return self.session.query(Birthday).order_by(Birthday.month, Birthday.day).all()
 
     def get_bd_list_at_date(self, curr_day: int, curr_month: int) -> List[Birthday]:
         return self.session.query(Birthday).filter(
