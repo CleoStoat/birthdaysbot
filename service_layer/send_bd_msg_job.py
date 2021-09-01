@@ -1,8 +1,9 @@
 import datetime
+from service_layer.get_chat_member_cached import get_chat_member
+
 from domain.model import Birthday
 from typing import List, Optional
 
-import telegram
 from telegram.chatmember import ChatMember
 from telegram.ext.callbackcontext import CallbackContext
 
@@ -56,15 +57,15 @@ def send_bd_msg(context: CallbackContext, uow: AbstractUnitOfWork, chat_id: Opti
                 continue
 
             for bd in birthdays:
-                chat_member: ChatMember
-
-                try:
-                    chat_member = context.bot.get_chat_member(
-                        chat_id=gc.chat_id, user_id=bd.user_id
+                chat_member: Optional[ChatMember] = get_chat_member(
+                    chat_id=gc.chat_id, 
+                    user_id=bd.user_id,
+                    bot=context.bot
                     )
-                except telegram.error.TelegramError:
+                
+                if chat_member is None:
                     continue
-
+                
                 if chat_member.status in ["kicked", "left"]:
                     continue
 
@@ -76,3 +77,4 @@ def send_bd_msg(context: CallbackContext, uow: AbstractUnitOfWork, chat_id: Opti
                 context.bot.send_message(chat_id=gc.chat_id, text=text)
 
         uow.commit()
+

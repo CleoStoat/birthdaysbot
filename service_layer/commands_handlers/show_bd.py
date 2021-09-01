@@ -1,5 +1,6 @@
 import datetime
 from functools import lru_cache, partial
+from service_layer.get_chat_member_cached import get_chat_member
 
 from telegram.bot import Bot
 
@@ -13,19 +14,9 @@ from telegram.ext.callbackcontext import CallbackContext
 from service_layer.unit_of_work import AbstractUnitOfWork
 import config
 
-
-thebot: Bot
-
 def show_bd_cmd(
     update: Update, context: CallbackContext, uow: AbstractUnitOfWork
 ) -> None:
-    j = context.job_queue
-    job_func = partial(cmd, update=update, uow=uow)
-    j.run_once(callback=job_func, when=1, name="Show birthday list")
-
-
-
-def cmd(context: CallbackContext, update: Update, uow: AbstractUnitOfWork) -> None:
     if update.effective_message is None:
         return
 
@@ -42,14 +33,13 @@ def cmd(context: CallbackContext, update: Update, uow: AbstractUnitOfWork) -> No
 
         # Find out which birthdays are members of this chat
         birthday_chat_members: List[Tuple[Birthday, ChatMember]] = []
-        global thebot
-        thebot = context.bot
 
         for bd in birthdays:
 
             chat_member: Optional[ChatMember] = get_chat_member(
-                chat_id=update.effective_chat.id, 
-                user_id=bd.user_id
+                chat_id=chat_id, 
+                user_id=bd.user_id,
+                bot=context.bot
                 )
             
             if chat_member is None:
@@ -68,13 +58,3 @@ def cmd(context: CallbackContext, update: Update, uow: AbstractUnitOfWork) -> No
         update.effective_message.reply_text(text=text)
 
         uow.commit()
-
-
-@lru_cache(maxsize=500)
-def get_chat_member(chat_id: int, user_id) -> Optional[ChatMember]:
-    global thebot
-    try:
-        chat_member = thebot.get_chat_member(chat_id=chat_id, user_id=user_id)
-        return chat_member
-    except telegram.error.TelegramError:
-        return None
