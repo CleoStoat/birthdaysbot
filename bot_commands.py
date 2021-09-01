@@ -53,17 +53,19 @@ COMMANDS = [
         callback=show_bd_cmd,
         name="show_bd",
         description="Muestra el listado de cumpleaños en este chat",
+        run_async=True,
     ),
     CommandData(
         callback=show_hours_cmd,
         name="show_hours",
         description="Muestra el itinerario de horas",
     ),
-    # CommandData(
-    #     callback=trigger_bd_message_check_cmd,
-    #     name="trigger",
-    #     description="none",
-    # ),
+    CommandData(
+        callback=trigger_bd_message_check_cmd,
+        name="trigger",
+        description="none",
+        hidden=True,
+    ),
     CommandData(
         callback=set_congrats_message_cmd,
         name="set_congrats_message",

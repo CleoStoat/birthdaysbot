@@ -14,6 +14,8 @@ class CommandData:
     callback: Callable
     name: str
     description: str
+    hidden: bool = False
+    run_async: bool = False
 
 
 def set_bot_commands(
@@ -27,8 +29,11 @@ def set_bot_commands(
             CommandHandler(
                 command=cmd.name,
                 callback=partial(cmd.callback, uow=uow),
+                run_async=cmd.run_async
             )
         )
+        if cmd.hidden:
+            continue
 
         bot_commands.append(
             BotCommand(
