@@ -12,6 +12,7 @@ from service_layer.commands_handlers.show_hours import show_hours_cmd
 from service_layer.commands_handlers.trigger_bd_message_check import trigger_bd_message_check_cmd
 from service_layer.commands_handlers.set_congrats_msg import set_congrats_message_cmd
 from service_layer.commands_handlers.show_cur_hour import show_cur_hour_cmd
+from service_layer.commands_handlers.clear_cache import clear_cache_cmd
 
 COMMANDS = [
     CommandData(
@@ -75,5 +76,10 @@ COMMANDS = [
         callback=show_cur_hour_cmd,
         name="show_cur_hour",
         description="Muestra la hora actual (con el offset aplicado)",
+    ),
+    CommandData(
+        callback=clear_cache_cmd,
+        name="clear_cache",
+        description="(admin) reinicia la cache de nombres de usuarios",
     ),
 ]

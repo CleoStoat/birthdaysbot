@@ -13,3 +13,6 @@ def get_chat_member(chat_id: int, user_id: int, bot: Bot) -> Optional[ChatMember
         return chat_member
     except telegram.error.TelegramError:
         return None
+
+def clear_chat_member_cache():
+    get_chat_member.cache_clear()
