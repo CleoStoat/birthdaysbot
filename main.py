@@ -5,8 +5,6 @@ import logging
 from functools import partial
 
 from telegram.ext import Updater
-from telegram.ext.commandhandler import CommandHandler
-from telegram.ext.dispatcher import Dispatcher
 
 import config
 from adapters.orm import create_tables, start_mappers
