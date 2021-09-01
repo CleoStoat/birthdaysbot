@@ -54,6 +54,7 @@ COMMANDS = [
         callback=show_bd_cmd,
         name="show_bd",
         description="Muestra el listado de cumpleaños en este chat",
+        run_async=True,
     ),
     CommandData(
         callback=show_hours_cmd,
