@@ -25,35 +25,36 @@ def show_bd_cmd(
     if update.effective_message.from_user is None:
         return
 
-    birthdays: List[Birthday]
+
     with uow:
         # Get list of all birthdays
-        birthdays = [Birthday(x.user_id, x.day, x.month) for x in uow.repo.get_bd_list()]
-        uow.commit()
-
-    # Find out which birthdays are members of this chat
-    birthday_chat_members: List[Tuple[Birthday, ChatMember]] = []
-
-    for bd in birthdays:
-
-        chat_member: Optional[ChatMember] = get_chat_member(
-            chat_id=chat_id, 
-            user_id=bd.user_id,
-            bot=context.bot
-            )
-        
-        if chat_member is None:
-            continue
-        
-        if not chat_member.status not in ["kicked", "left"]:
-            continue
-
-        birthday_chat_members.append( (bd, chat_member) )
+        birthdays = uow.repo.get_bd_list()
 
 
-    text = "Cumpleaños del grupo:\n"
-    for bd_chat_mem in birthday_chat_members:
-        text += f"{bd_chat_mem[1].user.full_name}: {bd_chat_mem[0].day}/{bd_chat_mem[0].month}\n"
+        # Find out which birthdays are members of this chat
+        birthday_chat_members: List[Tuple[Birthday, ChatMember]] = []
+
+        for bd in birthdays:
+
+            chat_member: Optional[ChatMember] = get_chat_member(
+                chat_id=chat_id, 
+                user_id=bd.user_id,
+                bot=context.bot
+                )
+            
+            if chat_member is None:
+                continue
+            
+            if not chat_member.status not in ["kicked", "left"]:
+                continue
+
+            birthday_chat_members.append( (bd, chat_member) )
+
+
+        text = "Cumpleaños del grupo:\n"
+        for bd_chat_mem in birthday_chat_members:
+            text += f"{bd_chat_mem[1].user.full_name}: {bd_chat_mem[0].day}/{bd_chat_mem[0].month}\n"
 
         update.effective_message.reply_text(text=text)
 
+        uow.commit()
