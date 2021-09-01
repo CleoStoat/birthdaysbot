@@ -1,4 +1,5 @@
 import datetime
+import time
 from functools import lru_cache, partial
 from service_layer.get_chat_member_cached import get_chat_member
 
@@ -34,8 +35,16 @@ def show_bd_cmd(
         # Find out which birthdays are members of this chat
         birthday_chat_members: List[Tuple[Birthday, ChatMember]] = []
 
+
+        init_time = time.time()
+        interval_seconds = 5
+        update.effective_chat.send_action("typing")
+
         for bd in birthdays:
-            update.effective_chat.send_action("typing")
+            if time.time() > init_time + interval_seconds:
+                update.effective_chat.send_action("typing")
+                init_time = time.time()
+
             chat_member: Optional[ChatMember] = get_chat_member(
                 chat_id=chat_id, 
                 user_id=bd.user_id,
